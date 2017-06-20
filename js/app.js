@@ -2,7 +2,6 @@
 
 //Select three random photos from the image directory and display them side-by-side-by-side in the browser window.
 
-var randomImageGenerated, imageLeft, imageRight, imageCenter;
 
 var imageList = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 
@@ -27,11 +26,8 @@ var unicorn = new ImageObject('unicorn.jpg', 'Unicorn Meat');
 var usb = new ImageObject('usb.gif', 'USB Tentacle');
 var waterCan = new ImageObject('water-can.jpg', 'Self Watering Can');
 var wineGlass = new ImageObject('wine-glass.jpg', 'Wine Glass');
+
 var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, usb, waterCan, wineGlass];
-
-
-var imageParent = document.getElementById('images');
-
 
 function ImageObject (fileName,imageName) {
   this.fileName = fileName;
@@ -41,58 +37,81 @@ function ImageObject (fileName,imageName) {
   this.timesClicked = 0;
 }
 
-runSurvey();
+var imageParent = document.getElementById('images');
 
-var shownArray = [];
-var lastShownArray = new Array(3);
 
-function genNewImages () {
-  for (var i = 0; i < 3; i++) {
-    randomImageGenerated = generateRandomImage();
-    shownArray[i] = randomImageGenerated;
-    // if (shownArray.includes(randomImageGenerated)) {
-    //   console.log(randomImageGenerated);
-    //   console.log('Match! Boo!');
-    //   i -= 1;
-    // } else {
-    //   console.log('No match!');
-    // }
-  }
-}
+var currentlyShowing = [];
+var previouslyShown = [];
+var cloneImageList = imageList;
+var index;
 
-console.log(shownArray);
 
 function runSurvey () {
-  genNewImages();
-  // imageLeft = generateRandomImage();
-  // imageCenter = generateRandomImage();
-  // imageRight = generateRandomImage();
-  for (var i = 0; i < shownArray.length; i++) {
-    renderImage(shownArray[i]);
+  for (var i = 0; i < 3; i++) {
+    if (currentlyShowing.length < 1) {
+      generateRandomImage();
+    } else if (currentlyShowing.length >= 1) {
+      generateRandomClonedImage();
+    }
+    var removed = cloneImageList.splice(index, 1);
+    Array.prototype.push.apply(currentlyShowing, removed);
+    renderImage(currentlyShowing[i]);
+    for (var j = 0; j < objectList.length; j++) {
+      if (objectList[j].fileName == currentlyShowing[i]) {
+        objectList[j].timesShown++;
+        console.log(objectList[j]);
+      }
+    }
   }
-  // renderImage(imageLeft);
-  // renderImage(imageCenter);
-  // renderImage(imageRight);
 }
 
 //Receive clicks on those displayed images,
 //Track those clicks for each image.
+var round = 0;
+//when the page loads, start the round, run survey
+//then when there's a click, store the timesClicked, and add 3 new images, add to round, and runSurvey
+window.onload = function() {
+  round++;
+  runSurvey();
+};
+
 imageParent.addEventListener('click', function(event){
   var choice = event.target.getAttribute('id');
-  //TODO: add these to event Listener to store the click
-  // imageList.indexOf(choice);
-  // timesClicked++;
+  for (var i = 0; i < objectList.length; i++) {
+    if (objectList[i].fileName == choice) {
+      objectList[i].timesClicked++;
+      console.log(objectList[i]);
+    }
+  }
+  round++;
+  runSurvey();
 });
+
+for (var k = 2; k < 0 ; k--) {
+  // console.log(currentlyShowing);
+  // console.log('^^^ before splice ^^^');
+  var foo = cloneImageList.splice(-1, 0, previouslyShown[k]);
+  console.log(foo);
+  console.log(previouslyShown);
+  // previouslyShown = currentlyShowing;
+  // console.log('vvv after splice vvv');
+  // console.log(cloneImageList);
+}
+
+
+function generateRandomImage () {
+  index = Math.floor(Math.random() * imageList.length);
+  return imageList[index];
+}
+
+function generateRandomClonedImage () {
+  index = Math.floor(Math.random() * cloneImageList.length);
+  return cloneImageList[index];
+}
 
 function renderImage (imageId) {
   var img = document.createElement('img');
   img.setAttribute('src','images/' + imageId);
   img.setAttribute('id', imageId);
   imageParent.appendChild(img);
-}
-
-function generateRandomImage () {
-  var index = Math.floor(Math.random() * imageList.length);
-  return imageList[index];
-
 }
