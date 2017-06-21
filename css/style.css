@@ -13,3 +13,13 @@ img {
   margin: 0px 10px 0px 10px;
   width: 30%;
 }
+
+#list {
+  clear: both;
+  margin: 20px;
+}
+
+li {
+  text-align: left;
+  list-style: none;
+}

@@ -1,11 +1,19 @@
 'use strict';
 
-//Select three random photos from the image directory and display them side-by-side-by-side in the browser window.
+//TODO: halt eventListener after 25 clicks
 
+var imageParent = document.getElementById('imagesAll');
+var listParent = document.getElementById('list');
+var currentlyShowing = [];
+var previouslyShown = ['rmv'];
+var index;
+var round = 0;
 
 var imageList = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 
+var cloneImageList = imageList;
 
+// create 20 elements, 1 for each catalog image
 var bag = new ImageObject('bag.jpg', 'R2D2 Luggage');
 var banana = new ImageObject('banana.jpg', 'Banana Slicer');
 var bathroom = new ImageObject('bathroom.jpg', 'Bathroom Tablet Caddy');
@@ -27,8 +35,47 @@ var usb = new ImageObject('usb.gif', 'USB Tentacle');
 var waterCan = new ImageObject('water-can.jpg', 'Self Watering Can');
 var wineGlass = new ImageObject('wine-glass.jpg', 'Wine Glass');
 
+//add the new ImageObject objects to an array
 var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, usb, waterCan, wineGlass];
 
+//when the page loads, start the round, run survey
+// window.onload = function() {
+round++;
+runSurvey();
+// };
+
+//then when there's a click, store the timesClicked, and add 3 new images, add to round, and runSurvey
+imageParent.addEventListener('click', function(event){
+  if (round < 26) {
+    var choice = event.target.getAttribute('id');
+    for (var i = 0; i < objectList.length; i++) {
+      if (objectList[i].fileName == choice) {
+        objectList[i].timesClicked++;
+      }
+    }
+    // if not the first time through, move items from previouslyShown back into cloneImageList...
+    if (previouslyShown.indexOf('rmv') === -1) {
+      Array.prototype.push.apply(cloneImageList, previouslyShown);
+    }
+    previouslyShown = currentlyShowing;
+    // clear out the currentlyShowing array before running new round
+    currentlyShowing = [];
+    round++;
+    // remove images and then re-run
+    imageParent.removeChild(imageParent.lastChild);
+    imageParent.removeChild(imageParent.lastChild);
+    imageParent.removeChild(imageParent.lastChild);
+    runSurvey();
+  } else {
+    // remove images and move on, already. sheesh.
+    imageParent.removeChild(imageParent.lastChild);
+    imageParent.removeChild(imageParent.lastChild);
+    imageParent.removeChild(imageParent.lastChild);
+    addSummaryList();
+  }
+});
+
+//object constructor for ImageObject
 function ImageObject (fileName,imageName) {
   this.fileName = fileName;
   this.imageName = imageName;
@@ -37,72 +84,21 @@ function ImageObject (fileName,imageName) {
   this.timesClicked = 0;
 }
 
-var imageParent = document.getElementById('images');
-
-
-var currentlyShowing = [];
-var previouslyShown = [];
-var cloneImageList = imageList;
-var index;
-
-
+// wrapper function
 function runSurvey () {
   for (var i = 0; i < 3; i++) {
-    if (currentlyShowing.length < 1) {
-      generateRandomImage();
-    } else if (currentlyShowing.length >= 1) {
-      generateRandomClonedImage();
-    }
+    generateRandomClonedImage();
     var removed = cloneImageList.splice(index, 1);
     Array.prototype.push.apply(currentlyShowing, removed);
     renderImage(currentlyShowing[i]);
     for (var j = 0; j < objectList.length; j++) {
       if (objectList[j].fileName == currentlyShowing[i]) {
         objectList[j].timesShown++;
-        console.log(objectList[j]);
       }
     }
   }
 }
 
-//Receive clicks on those displayed images,
-//Track those clicks for each image.
-var round = 0;
-//when the page loads, start the round, run survey
-//then when there's a click, store the timesClicked, and add 3 new images, add to round, and runSurvey
-window.onload = function() {
-  round++;
-  runSurvey();
-};
-
-imageParent.addEventListener('click', function(event){
-  var choice = event.target.getAttribute('id');
-  for (var i = 0; i < objectList.length; i++) {
-    if (objectList[i].fileName == choice) {
-      objectList[i].timesClicked++;
-      console.log(objectList[i]);
-    }
-  }
-  round++;
-  runSurvey();
-});
-
-for (var k = 2; k < 0 ; k--) {
-  // console.log(currentlyShowing);
-  // console.log('^^^ before splice ^^^');
-  var foo = cloneImageList.splice(-1, 0, previouslyShown[k]);
-  console.log(foo);
-  console.log(previouslyShown);
-  // previouslyShown = currentlyShowing;
-  // console.log('vvv after splice vvv');
-  // console.log(cloneImageList);
-}
-
-
-function generateRandomImage () {
-  index = Math.floor(Math.random() * imageList.length);
-  return imageList[index];
-}
 
 function generateRandomClonedImage () {
   index = Math.floor(Math.random() * cloneImageList.length);
@@ -113,5 +109,20 @@ function renderImage (imageId) {
   var img = document.createElement('img');
   img.setAttribute('src','images/' + imageId);
   img.setAttribute('id', imageId);
-  imageParent.appendChild(img);
+  imageParent.append(img);
+}
+
+
+function addSummaryList () {
+  var ul = document.createElement('ul');
+  for (var i = 0; i < objectList.length; i++) {
+    var li = document.createElement('li');
+    if (objectList[i].timesClicked > 1 || objectList[i].timesClicked === 0) {
+      li.textContent = objectList[i].timesClicked + ' votes for the ' + objectList[i].imageName + '.';
+    } else {
+      li.textContent = objectList[i].timesClicked + ' vote for the ' + objectList[i].imageName + '.';
+    }
+    ul.append(li);
+  }
+  listParent.append(ul);
 }
