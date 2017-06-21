@@ -1,13 +1,14 @@
 'use strict';
 
-//TODO: halt eventListener after 25 clicks
-
 var imageParent = document.getElementById('imagesAll');
-var listParent = document.getElementById('list');
 var currentlyShowing = [];
 var previouslyShown = ['rmv'];
 var index;
 var round = 0;
+var maxRounds = 25;
+var timesClickedFromAll = [];
+var objectImageNamesAll = [];
+var timesShownFromAll = [];
 
 var imageList = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 
@@ -38,15 +39,13 @@ var wineGlass = new ImageObject('wine-glass.jpg', 'Wine Glass');
 //add the new ImageObject objects to an array
 var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, usb, waterCan, wineGlass];
 
-//when the page loads, start the round, run survey
-// window.onload = function() {
+//start the round, run survey
 round++;
 runSurvey();
-// };
 
 //then when there's a click, store the timesClicked, and add 3 new images, add to round, and runSurvey
 imageParent.addEventListener('click', function(event){
-  if (round < 26) {
+  if (round < maxRounds) {
     var choice = event.target.getAttribute('id');
     for (var i = 0; i < objectList.length; i++) {
       if (objectList[i].fileName == choice) {
@@ -71,7 +70,7 @@ imageParent.addEventListener('click', function(event){
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
-    addSummaryList();
+    addSummaryChart();
   }
 });
 
@@ -113,16 +112,43 @@ function renderImage (imageId) {
 }
 
 
-function addSummaryList () {
-  var ul = document.createElement('ul');
+function addSummaryChart () {
+  // Add imageName, timesClicked, timesShown to arrays to be referenced in chart
   for (var i = 0; i < objectList.length; i++) {
-    var li = document.createElement('li');
-    if (objectList[i].timesClicked > 1 || objectList[i].timesClicked === 0) {
-      li.textContent = objectList[i].timesClicked + ' votes for the ' + objectList[i].imageName + '.';
-    } else {
-      li.textContent = objectList[i].timesClicked + ' vote for the ' + objectList[i].imageName + '.';
-    }
-    ul.append(li);
+    objectImageNamesAll.push(objectList[i].imageName);
+    timesClickedFromAll.push(objectList[i].timesClicked);
+    timesShownFromAll.push(objectList[i].timesShown);
   }
-  listParent.append(ul);
+
+  var canvas = document.getElementById('chart');
+  var ctx = canvas.getContext('2d');
+  var clickedBarChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+      labels: objectImageNamesAll,
+      datasets: [{
+        label: 'Number of Times Clicked',
+        data: timesClickedFromAll,
+        backgroundColor: 'rgb(46, 106, 209)',
+        borderColor: 'rgb(46, 106, 209)',
+        borderWidth: 1
+      }, {
+        label: 'Number of Times Shown',
+        data: timesShownFromAll,
+        backgroundColor: 'rgb(132, 46, 209)',
+        borderColor: 'rgb(132, 46, 209)',
+        borderWidth: 1
+      }],
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    }
+  });
+  console.log(clickedBarChart);
 }
