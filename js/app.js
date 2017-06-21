@@ -3,6 +3,7 @@
 //TODO: halt eventListener after 25 clicks
 
 var imageParent = document.getElementById('imagesAll');
+var listParent = document.getElementById('list');
 var currentlyShowing = [];
 var previouslyShown = ['rmv'];
 var index;
@@ -52,10 +53,9 @@ imageParent.addEventListener('click', function(event){
         objectList[i].timesClicked++;
       }
     }
-    // move items from previouslyShown back into cloneImageList...
+    // if not the first time through, move items from previouslyShown back into cloneImageList...
     if (previouslyShown.indexOf('rmv') === -1) {
       Array.prototype.push.apply(cloneImageList, previouslyShown);
-    } else if (previouslyShown.indexOf('rmv') !== -1) {
     }
     previouslyShown = currentlyShowing;
     // clear out the currentlyShowing array before running new round
@@ -71,6 +71,7 @@ imageParent.addEventListener('click', function(event){
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
+    addSummaryList();
   }
 });
 
@@ -111,6 +112,17 @@ function renderImage (imageId) {
   imageParent.append(img);
 }
 
-for (var i = 0; i < objectList.length; i++) {
 
+function addSummaryList () {
+  var ul = document.createElement('ul');
+  for (var i = 0; i < objectList.length; i++) {
+    var li = document.createElement('li');
+    if (objectList[i].timesClicked > 1 || objectList[i].timesClicked === 0) {
+      li.textContent = objectList[i].timesClicked + ' votes for the ' + objectList[i].imageName + '.';
+    } else {
+      li.textContent = objectList[i].timesClicked + ' vote for the ' + objectList[i].imageName + '.';
+    }
+    ul.append(li);
+  }
+  listParent.append(ul);
 }
