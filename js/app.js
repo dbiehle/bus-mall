@@ -44,7 +44,7 @@ var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cth
 function ImageObject (fileName,imageName) {
   this.fileName = fileName;
   this.imageName = imageName;
-  this.imageId = imageList.indexOf(fileName);
+  this.imageId = imageList.indexOf(fileName); // NOTE: this property is not used anywhere
   this.timesShown = 0;
   // this.timesClicked = 0;
   this.getClicked = function () {
