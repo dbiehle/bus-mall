@@ -40,6 +40,38 @@ var wineGlass = new ImageObject('wine-glass.jpg', 'Wine Glass');
 //add the new ImageObject objects to an array
 var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, usb, waterCan, wineGlass];
 
+//object constructor for ImageObject
+function ImageObject (fileName,imageName) {
+  this.fileName = fileName;
+  this.imageName = imageName;
+  this.imageId = imageList.indexOf(fileName);
+  this.timesShown = 0;
+  // this.timesClicked = 0;
+  this.getClicked = function () {
+    this.timesClicked = localStorage.getItem('timesClicked');
+    if (this.timesClicked !== null) {
+      this.timesClicked = parseInt(this.timesClicked);
+    }
+  };
+  this.createOrUpdateClicked = function (value) {
+    value = value.toString();
+    localStorage.setItem('timesClicked', value);
+    this.timesClicked = localStorage.getItem('timesClicked');
+    return this.timesClicked;
+  };
+  this.incrementClicks = function () {
+    this.timesClicked = this.getClicked();
+    this.timesClicked++;
+    this.createOrUpdateClicked(this.timesClicked);
+  };
+}
+// Add locally stored variable timesClicked to object protoype
+// ImageObject.prototype.incrementClicks = function () {
+//   var timesClicked = getClicked();
+//   timesClicked++;
+//   createOrUpdateClicked(timesClicked);
+// };
+
 // start the round and store the round into local storage
 incrementRound();
 runSurvey();
@@ -81,25 +113,12 @@ imageParent.addEventListener('click', function(event){
 // add items to local storage
 // create, retrieve, update, delete functions
 
-function createOrUpdateClicked (value) {
-  value = value.toString();
-  localStorage.setItem('timesClicked', value);
-  var timesClicked = localStorage.getItem('timesClicked');
-  return timesClicked;
-}
 
-function getClicked () {
-  var timesClicked = localStorage.getItem('timesClicked');
-  if (timesClicked !== null) {
-    timesClicked = parseInt(timesClicked);
-  }
-}
-
-function incrementClicks () {
-  var timesClicked = getClicked();
-  timesClicked++;
-  createOrUpdateClicked(timesClicked);
-}
+// function incrementClicks () {
+//   var timesClicked = getClicked();
+//   timesClicked++;
+//   createOrUpdateClicked(timesClicked);
+// }
 
 function createOrUpdateRound (value) {
   value = value.toString();
@@ -127,14 +146,6 @@ function incrementRound() {
   createOrUpdateRound(round);
 }
 
-//object constructor for ImageObject
-function ImageObject (fileName,imageName) {
-  this.fileName = fileName;
-  this.imageName = imageName;
-  this.imageId = imageList.indexOf(fileName);
-  this.timesShown = 0;
-  this.timesClicked = 0;
-}
 
 // wrapper function
 function runSurvey () {
