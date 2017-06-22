@@ -6,7 +6,6 @@ var imageParent = document.getElementById('imagesAll');
 var currentlyShowing = [];
 var previouslyShown = ['rmv'];
 var index;
-// var round = 0;
 var maxRounds = 25;
 var timesClickedFromAll = [];
 var objectImageNamesAll = [];
@@ -52,7 +51,8 @@ imageParent.addEventListener('click', function(event){
     var choice = event.target.getAttribute('id');
     for (var i = 0; i < objectList.length; i++) {
       if (objectList[i].fileName == choice) {
-        objectList[i].timesClicked++;
+        // objectList[i].timesClicked++;
+        objectList[i].incrementClicks();
       }
     }
     // if not the first time through, move items from previouslyShown back into cloneImageList...
@@ -80,6 +80,26 @@ imageParent.addEventListener('click', function(event){
 
 // add items to local storage
 // create, retrieve, update, delete functions
+
+function createOrUpdateClicked (value) {
+  value = value.toString();
+  localStorage.setItem('timesClicked', value);
+  var timesClicked = localStorage.getItem('timesClicked');
+  return timesClicked;
+}
+
+function getClicked () {
+  var timesClicked = localStorage.getItem('timesClicked');
+  if (timesClicked !== null) {
+    timesClicked = parseInt(timesClicked);
+  }
+}
+
+function incrementClicks () {
+  var timesClicked = getClicked();
+  timesClicked++;
+  createOrUpdateClicked(timesClicked);
+}
 
 function createOrUpdateRound (value) {
   value = value.toString();
