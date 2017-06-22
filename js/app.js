@@ -1,10 +1,12 @@
 'use strict';
 
+//TODO: add persistence to clicker data
+
 var imageParent = document.getElementById('imagesAll');
 var currentlyShowing = [];
 var previouslyShown = ['rmv'];
 var index;
-var round = 0;
+// var round = 0;
 var maxRounds = 25;
 var timesClickedFromAll = [];
 var objectImageNamesAll = [];
@@ -39,13 +41,14 @@ var wineGlass = new ImageObject('wine-glass.jpg', 'Wine Glass');
 //add the new ImageObject objects to an array
 var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, usb, waterCan, wineGlass];
 
-//start the round, run survey
-round++;
+// start the round and store the round into local storage
+incrementRound();
 runSurvey();
+
 
 //then when there's a click, store the timesClicked, and add 3 new images, add to round, and runSurvey
 imageParent.addEventListener('click', function(event){
-  if (round < maxRounds) {
+  if (getRound() < maxRounds) {
     var choice = event.target.getAttribute('id');
     for (var i = 0; i < objectList.length; i++) {
       if (objectList[i].fileName == choice) {
@@ -59,7 +62,8 @@ imageParent.addEventListener('click', function(event){
     previouslyShown = currentlyShowing;
     // clear out the currentlyShowing array before running new round
     currentlyShowing = [];
-    round++;
+    incrementRound();
+    // round++;
     // remove images and then re-run
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
@@ -73,6 +77,35 @@ imageParent.addEventListener('click', function(event){
     addSummaryChart();
   }
 });
+
+// add items to local storage
+// create, retrieve, update, delete functions
+
+function createOrUpdateRound (value) {
+  value = value.toString();
+  localStorage.setItem('round', value);
+  var round = localStorage.getItem('round');
+  return round;
+}
+
+function getRound () {
+  var round = localStorage.getItem('round');
+  if (round !== null) {
+    round = parseInt(round);
+  }
+  return round;
+}
+
+function deleteRound() {
+  localStorage.removeItem('round');
+  return null;
+}
+
+function incrementRound() {
+  var round = getRound();
+  round++;
+  createOrUpdateRound(round);
+}
 
 //object constructor for ImageObject
 function ImageObject (fileName,imageName) {
