@@ -12,9 +12,7 @@ var timesShownFromAll = [];
 
 var imageList = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 
-var cloneImageList = imageList;
-
-// create 20 elements, 1 for each catalog image
+// create 20 objects, 1 for each catalog image
 var bag = new ImageObject('bag.jpg', 'R2D2 Luggage');
 var banana = new ImageObject('banana.jpg', 'Banana Slicer');
 var bathroom = new ImageObject('bathroom.jpg', 'Bathroom Tablet Caddy');
@@ -36,7 +34,7 @@ var usb = new ImageObject('usb.gif', 'USB Tentacle');
 var waterCan = new ImageObject('water-can.jpg', 'Self Watering Can');
 var wineGlass = new ImageObject('wine-glass.jpg', 'Wine Glass');
 
-//add the new ImageObject objects to an array
+// add the new ImageObject objects to an array
 var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, usb, waterCan, wineGlass];
 
 //object constructor for ImageObject
@@ -47,10 +45,10 @@ function ImageObject (fileName,imageName) {
   this.timesShown = 0;
 }
 
-// start the round and store the round into local storage
+// start the round
 runSurvey();
 
-//then when there's a click, store the timesClicked, and add 3 new images, add to round, and runSurvey
+// then after the user chooses an image, store the timesClicked, and add 3 new images, add to round, and runSurvey
 imageParent.addEventListener('click', function(event){
   incrementRound();
   if (getRound() < maxRounds) {
@@ -66,9 +64,9 @@ imageParent.addEventListener('click', function(event){
       };
       localStorage.setItem(objectList[i].fileName, JSON.stringify(storeItems));
     }
-    // if not the first time through, move items from previouslyShown back into cloneImageList...
+    // if not the first time through, move items from previouslyShown back into imageList...
     if (previouslyShown.indexOf('rmv') === -1) {
-      Array.prototype.push.apply(cloneImageList, previouslyShown);
+      Array.prototype.push.apply(imageList, previouslyShown);
     }
     previouslyShown = currentlyShowing;
     // clear out the currentlyShowing array before running new round
@@ -84,10 +82,11 @@ imageParent.addEventListener('click', function(event){
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
     addSummaryChart();
-    // localStorage.clear();
+    localStorage.clear();
   }
 });
 
+// 3 functions to create/update the round value and store in localStorage,...
 function createOrUpdateRound (value) {
   value = value.toString();
   localStorage.setItem('round', value);
@@ -95,6 +94,7 @@ function createOrUpdateRound (value) {
   return round;
 }
 
+// ...get the round value from localStorage,...
 function getRound () {
   var round = localStorage.getItem('round');
   if (round !== null) {
@@ -103,6 +103,7 @@ function getRound () {
   return round;
 }
 
+// ...and increment the round by one.
 function incrementRound() {
   var round = getRound();
   round++;
@@ -110,11 +111,17 @@ function incrementRound() {
 }
 
 // wrapper function
+// loops 3 times to grab a random image by index #,
+//      extract the fileName from the list of all images,
+//      add the extracted image to the empty array currentlyShowing
+//        (will have 3 image names at end of loop),
+//      render the image to the HTML,
+//      loop through each of the image objects, if find a match, increment timesShown
 function runSurvey () {
   for (var i = 0; i < 3; i++) {
     generateRandomClonedImage();
-    var removed = cloneImageList.splice(index, 1);
-    Array.prototype.push.apply(currentlyShowing, removed);
+    var imageExtracted = imageList.splice(index, 1);
+    Array.prototype.push.apply(currentlyShowing, imageExtracted);
     renderImage(currentlyShowing[i]);
     for (var j = 0; j < objectList.length; j++) {
       if (objectList[j].fileName == currentlyShowing[i]) {
@@ -126,8 +133,8 @@ function runSurvey () {
 
 
 function generateRandomClonedImage () {
-  index = Math.floor(Math.random() * cloneImageList.length);
-  return cloneImageList[index];
+  index = Math.floor(Math.random() * imageList.length);
+  return imageList[index];
 }
 
 function renderImage (imageId) {
@@ -137,7 +144,7 @@ function renderImage (imageId) {
   imageParent.append(img);
 }
 
-
+// Adds the lovely horizontal-bar chart to the HTML using the Chart.js library
 function addSummaryChart () {
   // Add imageName, timesClicked, timesShown to arrays to be referenced in chart
   for (var i = 0; i < objectList.length; i++) {
