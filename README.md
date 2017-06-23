@@ -16,3 +16,19 @@ The app's purpose is to have the group members choose which product, of the thre
 To keep the product selection process as untainted as possible, you have been instructed to not allow any results to be shown to users until there have been a total of 25 selections made.
 The marketing team is not only interested in the total number of clicks, but also the percentage of times that an item was clicked when it was shown. So, you'll also need to keep track of how many times each image is displayed and do the calculations.
 You are also responsible for the look and feel of the app, so don't forget a custom font, color palette, layout with semantic HTML, and so on.
+
+---
+#### MVP
+- Select three random photos from the image directory and display them side-by-side-by-side in the browser window.
+- Receive clicks on those displayed images,
+- Track those clicks for each image.
+- Track how many times each image is displayed, for statistical purposes.
+- Upon receiving a click, three new non-duplicating random images need to be automatically displayed. In other words, the three images that are displayed should contain no duplicates, nor should they duplicate with any images that we displayed immediately before.
+- Create a constructor function that creates an object associated with each image, and has (at a minimum)
+  - properties for the name of the image (to be used for display purposes),
+  - its filepath,
+  - the number of times it has been shown, and
+  - the number of times it has been clicked. You'll probably find it useful to create a property that contains a text string you can use as an ID in HTML.
+- After 25 selections have been made,
+  - Turn off the event listeners on the images (to prevent additional voting) and
+  - Display a list of the products with votes received with each list item looking like "3 votes for the Banana Slicer".
