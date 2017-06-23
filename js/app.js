@@ -1,7 +1,5 @@
 'use strict';
 
-//TODO: add persistence to clicker data
-
 var imageParent = document.getElementById('imagesAll');
 var currentlyShowing = [];
 var previouslyShown = ['rmv'];
@@ -12,7 +10,6 @@ var timesClickedFromAll = [];
 var objectImageNamesAll = [];
 var timesShownFromAll = [];
 
-//TODO: make this cleaner by just using one version of this list
 var imageList = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 
 var cloneImageList = imageList;
@@ -46,8 +43,6 @@ var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cth
 function ImageObject (fileName,imageName) {
   this.fileName = fileName;
   this.imageName = imageName;
-  // NOTE: this imageID property is not used anywhere
-  this.imageId = imageList.indexOf(fileName);
   this.timesClicked = 0;
   this.timesShown = 0;
 }
@@ -113,7 +108,6 @@ function incrementRound() {
   round++;
   createOrUpdateRound(round);
 }
-
 
 // wrapper function
 function runSurvey () {
