@@ -22,7 +22,7 @@ Part of your assignment today is to write your own user stories. Be sure to cons
 - As a focus group participant, I want to get paid to tell people what most people would like best, so the world can recognize my brilliance and I can buy a pizza!
 - As a person with less-than-perfect vision, I want the display to be easy enough to see, so I don't have to fake my answers.
 - As a person who needs to catch a bus, I want the survey to be quick and easy to use so I can catch that bus.
-- As a [ADD FOURTH USER GROUP STORY]
+- As a person who loves games, I want the survey to be fun to take so I can have a good time taking this survey.
 
 #### MVP
 - Select three random photos from the image directory and display them side-by-side-by-side in the browser window.
