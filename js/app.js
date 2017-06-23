@@ -1,15 +1,18 @@
 'use strict';
 
+//TODO: add persistence to clicker data
+
 var imageParent = document.getElementById('imagesAll');
 var currentlyShowing = [];
 var previouslyShown = ['rmv'];
 var index;
-var round = 0;
 var maxRounds = 25;
+var storeItems = [];
 var timesClickedFromAll = [];
 var objectImageNamesAll = [];
 var timesShownFromAll = [];
 
+//TODO: make this cleaner by just using one version of this list
 var imageList = ['bag.jpg', 'banana.jpg', 'bathroom.jpg', 'boots.jpg', 'breakfast.jpg', 'bubblegum.jpg', 'chair.jpg', 'cthulhu.jpg', 'dog-duck.jpg', 'dragon.jpg', 'pen.jpg', 'pet-sweep.jpg', 'scissors.jpg', 'shark.jpg', 'sweep.png', 'tauntaun.jpg', 'unicorn.jpg', 'usb.gif', 'water-can.jpg', 'wine-glass.jpg'];
 
 var cloneImageList = imageList;
@@ -39,18 +42,34 @@ var wineGlass = new ImageObject('wine-glass.jpg', 'Wine Glass');
 //add the new ImageObject objects to an array
 var objectList = [bag, banana, bathroom, boots, breakfast, bubblegum, chair, cthulhu, dogDuck, dragon, pen, petSweep, scissors, shark, sweep, tauntaun, unicorn, usb, waterCan, wineGlass];
 
-//start the round, run survey
-round++;
+//object constructor for ImageObject
+function ImageObject (fileName,imageName) {
+  this.fileName = fileName;
+  this.imageName = imageName;
+  // NOTE: this imageID property is not used anywhere
+  this.imageId = imageList.indexOf(fileName);
+  this.timesClicked = 0;
+  this.timesShown = 0;
+}
+
+// start the round and store the round into local storage
 runSurvey();
 
 //then when there's a click, store the timesClicked, and add 3 new images, add to round, and runSurvey
 imageParent.addEventListener('click', function(event){
-  if (round < maxRounds) {
+  incrementRound();
+  if (getRound() < maxRounds) {
     var choice = event.target.getAttribute('id');
     for (var i = 0; i < objectList.length; i++) {
       if (objectList[i].fileName == choice) {
         objectList[i].timesClicked++;
       }
+      storeItems = {
+        image: objectList[i].fileName,
+        timesShown: objectList[i].timesShown,
+        timesClicked: objectList[i].timesClicked
+      };
+      localStorage.setItem(objectList[i].fileName, JSON.stringify(storeItems));
     }
     // if not the first time through, move items from previouslyShown back into cloneImageList...
     if (previouslyShown.indexOf('rmv') === -1) {
@@ -59,7 +78,6 @@ imageParent.addEventListener('click', function(event){
     previouslyShown = currentlyShowing;
     // clear out the currentlyShowing array before running new round
     currentlyShowing = [];
-    round++;
     // remove images and then re-run
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
@@ -71,17 +89,31 @@ imageParent.addEventListener('click', function(event){
     imageParent.removeChild(imageParent.lastChild);
     imageParent.removeChild(imageParent.lastChild);
     addSummaryChart();
+    // localStorage.clear();
   }
 });
 
-//object constructor for ImageObject
-function ImageObject (fileName,imageName) {
-  this.fileName = fileName;
-  this.imageName = imageName;
-  this.imageId = imageList.indexOf(fileName);
-  this.timesShown = 0;
-  this.timesClicked = 0;
+function createOrUpdateRound (value) {
+  value = value.toString();
+  localStorage.setItem('round', value);
+  var round = localStorage.getItem('round');
+  return round;
 }
+
+function getRound () {
+  var round = localStorage.getItem('round');
+  if (round !== null) {
+    round = parseInt(round);
+  }
+  return round;
+}
+
+function incrementRound() {
+  var round = getRound();
+  round++;
+  createOrUpdateRound(round);
+}
+
 
 // wrapper function
 function runSurvey () {
