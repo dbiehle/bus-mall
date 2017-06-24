@@ -1,4 +1,3 @@
-Part of your assignment today is to write your own user stories. Be sure to consider the multiple roles involved: the marketing research team, the developer, and the focus group participant who will be using the application. Try to write 4-5 user stories for each role.
 
 # BusMall
 
@@ -7,7 +6,7 @@ Part of your assignment today is to write your own user stories. Be sure to cons
 ## User Stories
 
 ### Marketing Research Team
-- As a quantitative researcher, I want to see an app that shows a few images at a time to a focus group participant and asks for preference, so I can deteremine which products to show in our catalogs.
+- As a quantitative researcher, I want to see an app that shows a few images at a time to a focus group participant and asks for preference, so I can determine which products to show in our catalogs.
 - As a researcher, I want to know whether we any of our products in BusMall resonate with passengers, so I can decide whether we need a new catalog of items.
 - As a someone who can only act on verifiable data, I want to know the level of interest each of our current catalog items holds, so I can write up a report for the marketing team showing what works and what doesn't and use data to back up the findings.
 - As someone with no programming experience/expertise, I want someone else to build this app that shows me the results in an easy-to-read chart, so I don't have to hunt for the results or go ask that smelly developer to get them for me.
@@ -23,18 +22,3 @@ Part of your assignment today is to write your own user stories. Be sure to cons
 - As a person with less-than-perfect vision, I want the display to be easy enough to see, so I don't have to fake my answers.
 - As a person who needs to catch a bus, I want the survey to be quick and easy to use so I can catch that bus.
 - As a person who loves games, I want the survey to be fun to take so I can have a good time taking this survey.
-
-#### MVP
-- Select three random photos from the image directory and display them side-by-side-by-side in the browser window.
-- Receive clicks on those displayed images,
-- Track those clicks for each image.
-- Track how many times each image is displayed, for statistical purposes.
-- Upon receiving a click, three new non-duplicating random images need to be automatically displayed. In other words, the three images that are displayed should contain no duplicates, nor should they duplicate with any images that we displayed immediately before.
-- Create a constructor function that creates an object associated with each image, and has (at a minimum)
-  - properties for the name of the image (to be used for display purposes),
-  - its filepath,
-  - the number of times it has been shown, and
-  - the number of times it has been clicked. You'll probably find it useful to create a property that contains a text string you can use as an ID in HTML.
-- After 25 selections have been made,
-  - Turn off the event listeners on the images (to prevent additional voting) and
-  - Display a list of the products with votes received with each list item looking like "3 votes for the Banana Slicer".
